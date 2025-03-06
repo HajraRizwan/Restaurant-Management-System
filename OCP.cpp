@@ -1,3 +1,4 @@
+//OCP 
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -127,13 +128,26 @@ public:
     }
 };
 
-// Payment Class
 class Payment {
 public:
-    void processPayment(double amount) {
-        cout << "Processing payment of Rs" << amount << "... Payment successful!\n";
+    virtual void processPayment(double amount) = 0;
+    virtual ~Payment() = default; 
+};
+
+class CardPayment : public Payment {  
+public:
+    void processPayment(double amount) override {
+        cout << "Processing card payment of Rs" << amount << "...\n";
     }
 };
+
+class CashPayment : public Payment {  
+public:
+    void processPayment(double amount) override {
+        cout << "Processing cash payment of Rs" << amount << "...\n";
+    }
+};
+
 
 // Feedback Manager Class
 class FeedbackManager {
@@ -181,6 +195,26 @@ public:
         }
     }
 };
+class UserInputHandler {
+public:
+    static vector<Meal> selectMeals(Menu& menu) {
+        vector<Meal> selectedMeals;
+        int choice;
+        menu.displayMeals();
+        cout << "Select meals by number (0 to stop): ";
+        while (true) {
+            cin >> choice;
+            if (choice == 0) break;
+            if (choice >= 1 && choice <= (int)menu.meals.size()) {
+                selectedMeals.push_back(menu.meals[choice - 1]);
+            } else {
+                cout << "Invalid choice, try again." << endl;
+            }
+        }
+        return selectedMeals;
+    }
+};
+
 
 // Main
 int main() {
@@ -214,8 +248,26 @@ int main() {
                 cout << "Your dine-in order is ready. Enjoy your meal!\n";
             }
             
-            Payment payment;
-            payment.processPayment(total);
+           cout << "Choose payment method: 1) Card  2) Cash: ";
+int paymentChoice;
+cin >> paymentChoice;
+
+Payment* payment;
+if (paymentChoice == 1) {
+    payment = new CardPayment();
+    int cardnumber;
+    cout<<"Enter card number: ";
+    cin>>cardnumber;
+     int cardpass;
+    cout<<"Enter password: ";
+    cin>>cardpasss;
+    
+} else {
+    payment = new CashPayment();
+}
+
+payment->processPayment(total);
+delete payment;
             
             delete taxStrategy;
             delete discountStrategy;

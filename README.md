@@ -86,5 +86,5 @@ This restructuring ensures that the system can grow with business needs without 
 Clone the repository:  
 ```sh
 git clone https://github.com/HajraRizwan/Restaurant-Management-System.git
-```sh
+
 

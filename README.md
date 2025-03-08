@@ -15,12 +15,6 @@ A simple **C++** console-based restaurant management system that allows customer
 
 🖥️ **C++ (Object-Oriented Programming)**  
 
-## **How to Run**  
-
-Clone the repository:  
-```sh
-git clone https://github.com/HajraRizwan/Restaurant-Management-System.git
-
 # SOLID Principles Applied
 
 A collection of five design principles known as **SOLID** aids programmers in creating code that is clear, scalable, and maintainable. SOLID ensures that new features can be introduced without interfering with existing functionality by reducing complexity, increasing flexibility, simplifying debugging, and improving collaboration.
@@ -86,3 +80,11 @@ The refactored design improves **maintainability, flexibility, and scalability**
 - **DIP:** Enhances modularity and flexibility.
 
 This restructuring ensures that the system can grow with business needs without adding complexity or technical debt.
+
+## **How to Run**  
+
+Clone the repository:  
+```sh
+git clone https://github.com/HajraRizwan/Restaurant-Management-System.git
+```sh
+

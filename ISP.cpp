@@ -1,7 +1,6 @@
-//ISP 
-
 #include <iostream>
 #include <vector>
+
 using namespace std;
 
 // Meal Class
@@ -12,7 +11,7 @@ public:
     Meal(string n, double p) : name(n), price(p) {}
 };
 
-// Menu Class
+// Menu Class (SRP Applied)
 class Menu {
 public:
     vector<Meal> meals = {
@@ -29,29 +28,27 @@ public:
     }
 };
 
-// CustomerDetails Class
+// CustomerDetails Class (SRP Applied)
 class CustomerDetails {
 public:
     string name, contact;
-    
     void inputDetails() {
         cout << "Enter customer name: ";
-        cin >> name;
+        cin.ignore();
+        getline(cin, name);
         cout << "Enter contact number: ";
         cin >> contact;
     }
 };
 
-// Order Class
+// Order Class (SRP Applied)
 class Order {
 public:
-    CustomerDetails customer;
     vector<Meal> selectedMeals;
-    bool dineIn;
     double totalPrice = 0;
+    bool dineIn;
 
     void placeOrder(Menu &menu) {
-        customer.inputDetails();
         menu.displayMeals();
         cout << "Select meals by number (0 to stop): ";
         int choice;
@@ -70,7 +67,7 @@ public:
     }
 };
 
-// Tax Strategy Interface
+// Tax Strategy (OCP Applied)
 class TaxStrategy {
 public:
     virtual double calculateTax(double amount) = 0;
@@ -91,7 +88,7 @@ public:
     }
 };
 
-// Tax Strategy Factory
+// Tax Strategy Factory (OCP Applied)
 class TaxStrategyFactory {
 public:
     static TaxStrategy* getTaxStrategy(bool dineIn) {
@@ -99,7 +96,7 @@ public:
     }
 };
 
-// Discount Strategy Interface
+// Discount Strategy (OCP Applied)
 class DiscountStrategy {
 public:
     virtual double applyDiscount(double price) = 0;
@@ -120,7 +117,7 @@ public:
     }
 };
 
-// Billing Class
+// Billing Class (SRP & OCP Applied)
 class Billing {
 public:
     double calculateTotal(Order &order, TaxStrategy* taxStrategy, DiscountStrategy* discountStrategy) {
@@ -129,7 +126,7 @@ public:
     }
 };
 
-// Payment Class
+// Payment Class (SRP Applied)
 class Payment {
 public:
     void processPayment(double amount) {
@@ -137,17 +134,12 @@ public:
     }
 };
 
-// Feedback Manager Class
-class FeedbackManager {
+// Feedback Repository (SRP Applied)
+class FeedbackRepository {
 public:
     static vector<string> feedbackList;
-    void giveFeedback() {
-        string feedback;
-        cout << "Please provide your feedback: ";
-        cin.ignore();
-        getline(cin, feedback);
+    static void storeFeedback(const string& feedback) {
         feedbackList.push_back(feedback);
-        cout << "Thank you for your feedback!\n";
     }
     static void displayFeedbacks() {
         cout << "\nCustomer Feedbacks:\n";
@@ -156,9 +148,22 @@ public:
         }
     }
 };
-vector<string> FeedbackManager::feedbackList;
+vector<string> FeedbackRepository::feedbackList;
 
-// Staff Management (Applying ISP)
+// Feedback Manager (SRP Applied)
+class FeedbackManager {
+public:
+    void giveFeedback() {
+        string feedback;
+        cout << "Please provide your feedback: ";
+        cin.ignore();
+        getline(cin, feedback);
+        FeedbackRepository::storeFeedback(feedback);
+        cout << "Thank you for your feedback!\n";
+    }
+};
+
+// Employee Base Class (LSP Applied)
 class Employee {
 public:
     string name;
@@ -218,3 +223,36 @@ public:
         for (auto s : staffList) delete s;
     }
 };
+
+// Main Function
+int main() {
+    Menu menu;
+    Order order;
+    CustomerDetails customer;
+
+    cout << "Welcome to the Restaurant Management System!\n";
+    customer.inputDetails();
+    order.placeOrder(menu);
+
+    TaxStrategy* taxStrategy = TaxStrategyFactory::getTaxStrategy(order.dineIn);
+    DiscountStrategy* discountStrategy = new PercentageDiscount();
+
+    Billing billing;
+    double totalAmount = billing.calculateTotal(order, taxStrategy, discountStrategy);
+    
+    Payment payment;
+    payment.processPayment(totalAmount);
+
+    // Free allocated memory
+    delete taxStrategy;
+    delete discountStrategy;
+
+    FeedbackManager feedbackManager;
+    feedbackManager.giveFeedback();
+    FeedbackRepository::displayFeedbacks();
+
+    StaffManagement staffManagement;
+    staffManagement.displayStaff();
+
+    return 0;
+}
